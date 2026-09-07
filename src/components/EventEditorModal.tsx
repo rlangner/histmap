@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { HistoricalEvent, HistoricalDate, GeometryType, DatePrecision } from '../types/historical';
+import { showAlert } from '../utils/alertUtils';
 import { COLORS, SPACING, RADIUS } from '../styles/theme';
 
 interface EventEditorModalProps {
@@ -197,7 +198,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
 
   const handleSave = () => {
     if (!title.trim()) {
-      Alert.alert('Validation Error', 'Please enter a title for the historical event.');
+      showAlert('Validation Error', 'Please enter a title for the historical event.');
       return;
     }
 
@@ -206,7 +207,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
     if (dateMode !== 'no_start') {
       const parsedYear = parseInt(startYear, 10);
       if (isNaN(parsedYear)) {
-        Alert.alert('Validation Error', 'Please enter a valid start year.');
+        showAlert('Validation Error', 'Please enter a valid start year.');
         return;
       }
       const actualYear = startIsBCE ? -Math.abs(parsedYear) : Math.abs(parsedYear);
@@ -234,7 +235,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
     if (dateMode === 'range' || dateMode === 'no_start') {
       const parsedYear = parseInt(endYear, 10);
       if (isNaN(parsedYear)) {
-        Alert.alert('Validation Error', 'Please enter a valid end year.');
+        showAlert('Validation Error', 'Please enter a valid end year.');
         return;
       }
       const actualYear = endIsBCE ? -Math.abs(parsedYear) : Math.abs(parsedYear);
@@ -263,7 +264,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
       const lat = parseFloat(latInput);
       const lng = parseFloat(lngInput);
       if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-        Alert.alert(
+        showAlert(
           'Validation Error',
           'Please enter valid GPS coordinates (Latitude between -90 and 90, Longitude between -180 and 180).'
         );
@@ -273,12 +274,12 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
     }
 
     if (geometryType === 'path' && pathCoords.length < 2) {
-      Alert.alert('Validation Error', 'A path requires at least 2 waypoints. Use the map to draw your route.');
+      showAlert('Validation Error', 'A path requires at least 2 waypoints. Use the map to draw your route.');
       return;
     }
 
     if (geometryType === 'polygon' && polygonCoords.length < 3) {
-      Alert.alert('Validation Error', 'A region/polygon requires at least 3 vertices. Use the map to outline the region.');
+      showAlert('Validation Error', 'A region/polygon requires at least 3 vertices. Use the map to outline the region.');
       return;
     }
 

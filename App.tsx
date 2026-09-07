@@ -20,6 +20,7 @@ import { MultiTierTimeline } from './src/components/MultiTierTimeline';
 import { TimelineControls } from './src/components/TimelineControls';
 import { EventDetailModal } from './src/components/EventDetailModal';
 import { EventEditorModal } from './src/components/EventEditorModal';
+import { showAlert } from './src/utils/alertUtils';
 import { COLORS, SPACING, RADIUS } from './src/styles/theme';
 
 export default function App() {
@@ -170,7 +171,7 @@ export default function App() {
 
   // Delete Event
   const handleDeleteEvent = async (eventId: string) => {
-    Alert.alert('Delete Event', 'Are you sure you want to remove this historical record?', [
+    showAlert('Delete Event', 'Are you sure you want to remove this historical record?', [
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Delete',
@@ -195,7 +196,7 @@ export default function App() {
   // Share all events via AirDrop / Messages
   const handleShareAllEvents = async () => {
     if (events.length === 0) {
-      Alert.alert('No Events', 'There are no historical events to share.');
+      showAlert('No Events', 'There are no historical events to share.');
       return;
     }
     await shareAllEvents(events);
@@ -223,7 +224,7 @@ export default function App() {
     setEvents(merged);
     await saveEvents(merged);
 
-    Alert.alert(
+    showAlert(
       'Import Successful',
       `Loaded ${imported.length} historical record(s) directly into device storage.`
     );

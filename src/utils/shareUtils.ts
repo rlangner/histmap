@@ -3,6 +3,7 @@ import * as Sharing from 'expo-sharing';
 import { File, Paths } from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 import { HistoricalEvent } from '../types/historical';
+import { showAlert } from './alertUtils';
 
 export interface HistMapExportPackage {
   version: '1.0';
@@ -76,7 +77,7 @@ async function shareExportData(
       URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Failed to download on web', err);
-      Alert.alert('Export Error', 'Unable to download file on web.');
+      showAlert('Export Error', 'Unable to download file on web.');
     }
     return;
   }
@@ -85,7 +86,7 @@ async function shareExportData(
   try {
     const isAvailable = await Sharing.isAvailableAsync();
     if (!isAvailable) {
-      Alert.alert(
+      showAlert(
         'Sharing Unavailable',
         'Direct file sharing is not supported on this specific device configuration.'
       );
@@ -108,7 +109,7 @@ async function shareExportData(
     });
   } catch (error) {
     console.error('Error sharing event:', error);
-    Alert.alert('Sharing Error', 'Failed to prepare the event file for sharing.');
+    showAlert('Sharing Error', 'Failed to prepare the event file for sharing.');
   }
 }
 
@@ -152,7 +153,7 @@ export async function importEventsFromFile(): Promise<HistoricalEvent[] | null> 
     return parseImportedJson(text);
   } catch (error) {
     console.error('Error importing events file:', error);
-    Alert.alert('Import Error', 'Could not open or read the selected file.');
+    showAlert('Import Error', 'Could not open or read the selected file.');
     return null;
   }
 }
@@ -179,13 +180,13 @@ function parseImportedJson(text: string): HistoricalEvent[] | null {
       return [data];
     }
 
-    Alert.alert(
+    showAlert(
       'Invalid Format',
       'The selected file does not contain valid HistMap event data.'
     );
     return null;
   } catch (err) {
-    Alert.alert('Invalid File', 'Could not parse JSON from the selected file.');
+    showAlert('Invalid File', 'Could not parse JSON from the selected file.');
     return null;
   }
 }
