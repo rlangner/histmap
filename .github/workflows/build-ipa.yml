@@ -1,0 +1,47 @@
+name: Build Unsigned iOS IPA
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate native iOS project
+        run: npx expo prebuild --platform ios --clean
+
+      - name: Build and Archive (unsigned)
+        run: |
+          cd ios
+          xcodebuild archive \
+            -workspace histmap.xcworkspace \
+            -scheme histmap \
+            -configuration Release \
+            -archivePath ../build/histmap.xcarchive \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Package into IPA
+        run: |
+          mkdir -p Payload
+          cp -r build/histmap.xcarchive/Products/Applications/histmap.app Payload/
+          zip -r histmap-unsigned.ipa Payload/
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: histmap-unsigned-ipa
+          path: histmap-unsigned.ipa
