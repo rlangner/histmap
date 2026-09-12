@@ -7,7 +7,7 @@ export const INITIAL_HISTORICAL_EVENTS: HistoricalEvent[] = [
     title: 'Stonehenge Construction Phase',
     notes: 'Prehistoric megalithic monument on Salisbury Plain in Wiltshire, England. Constructed in stages beginning from unknown Neolithic origins and active ceremonial use until the Bronze Age.',
     color: '#8b5cf6',
-    category: 'culture',
+    category: 'Other',
     hasNoStartDate: true,
     endDate: {
       year: -1500,
@@ -30,7 +30,7 @@ export const INITIAL_HISTORICAL_EVENTS: HistoricalEvent[] = [
     title: 'Egyptian New Kingdom',
     notes: 'The golden age of Ancient Egypt, spanning the 18th, 19th, and 20th Dynasties. Renowned for pharaohs like Hatshepsut, Akhenaten, Tutankhamun, and Ramesses II, expanding territorial reach from Nubia into the Levant.',
     color: '#eab308',
-    category: 'empire',
+    category: 'Exodus',
     startDate: {
       year: -1550,
       precision: 'century',
@@ -69,7 +69,7 @@ export const INITIAL_HISTORICAL_EVENTS: HistoricalEvent[] = [
     title: 'Battle of Marathon',
     notes: 'Decisive Greek victory by Athenian and Plataean hoplites under Miltiades against the first Persian invasion of Greece commanded by Datis and Artaphernes.',
     color: '#ef4444',
-    category: 'battle',
+    category: 'Other',
     startDate: {
       year: -490,
       month: 8,
@@ -92,7 +92,7 @@ export const INITIAL_HISTORICAL_EVENTS: HistoricalEvent[] = [
     title: 'The Great Silk Road',
     notes: 'Vast network of Eurasian trade routes active from the Han dynasty until the Ottoman boycott of trade with the West in 1453. Spurred economic, cultural, and religious transmission between East Asia, the Middle East, and the Mediterranean.',
     color: '#f97316',
-    category: 'exploration',
+    category: 'Other',
     startDate: {
       year: -130,
       precision: 'year',
@@ -128,7 +128,7 @@ export const INITIAL_HISTORICAL_EVENTS: HistoricalEvent[] = [
     title: 'Roman Empire (Height under Trajan)',
     notes: 'The post-Republican period of ancient Rome. At its height under Trajan in 117 CE, it spanned Western Europe, the Mediterranean, parts of Britain, North Africa, and the Near East with roughly 50 to 70 million inhabitants.',
     color: '#dc2626',
-    category: 'empire',
+    category: 'David y Solomon',
     startDate: {
       year: -27,
       precision: 'year',
@@ -170,7 +170,7 @@ export const INITIAL_HISTORICAL_EVENTS: HistoricalEvent[] = [
     title: 'Battle of Hastings',
     notes: 'Fought between the Norman-French army of Duke William II of Normandy and an Anglo-Saxon army under King Harold Godwinson, beginning the Norman Conquest of England.',
     color: '#0284c7',
-    category: 'battle',
+    category: 'Other',
     startDate: {
       year: 1066,
       month: 10,
@@ -193,7 +193,7 @@ export const INITIAL_HISTORICAL_EVENTS: HistoricalEvent[] = [
     title: 'Magellan-Elcano Circumnavigation',
     notes: 'The first recorded voyage around the Earth. Commanded by Ferdinand Magellan and completed by Juan Sebastián Elcano aboard the Victoria, proving the ocean continuity of the globe.',
     color: '#0d9488',
-    category: 'exploration',
+    category: 'Other',
     startDate: {
       year: 1519,
       month: 9,
@@ -234,7 +234,7 @@ export const INITIAL_HISTORICAL_EVENTS: HistoricalEvent[] = [
     title: 'United States of America',
     notes: 'Founded with the Declaration of Independence on July 4, 1776, from thirteen British colonies, evolving into a federal republic spanning North America.',
     color: '#3b82f6',
-    category: 'politics',
+    category: 'Other',
     startDate: {
       year: 1776,
       month: 7,
@@ -270,7 +270,7 @@ export const INITIAL_HISTORICAL_EVENTS: HistoricalEvent[] = [
     title: 'Battle of Waterloo',
     notes: 'Napoleon Bonaparte defeated by the Anglo-allied army of the Duke of Wellington and Blücher’s Prussian army. The conflict raged from late morning (11:30 AM) until the French imperial guard broke around 20:30 PM, ending the Napoleonic Wars.',
     color: '#b91c1c',
-    category: 'battle',
+    category: 'Other',
     startDate: {
       year: 1815,
       month: 6,
@@ -304,7 +304,7 @@ export const INITIAL_HISTORICAL_EVENTS: HistoricalEvent[] = [
     title: 'Apollo 11 Mission & Lunar Landing',
     notes: 'First crewed mission to land on the Moon. Launched from Cape Canaveral on July 16. Lunar Module Eagle touched down in the Sea of Tranquility on July 20 at 20:17 UTC, and Neil Armstrong stepped onto the lunar surface at 02:56 UTC.',
     color: '#06b6d4',
-    category: 'science',
+    category: 'Other',
     startDate: {
       year: 1969,
       month: 7,
@@ -338,7 +338,7 @@ export const INITIAL_HISTORICAL_EVENTS: HistoricalEvent[] = [
     title: 'Fall of the Berlin Wall',
     notes: 'Following Günter Schabowski’s televised press conference announcing immediate border opening around 19:00, thousands gathered at Bornholmer Straße crossing, causing the dismantling of the Iron Curtain.',
     color: '#10b981',
-    category: 'politics',
+    category: 'Other',
     startDate: {
       year: 1989,
       month: 11,

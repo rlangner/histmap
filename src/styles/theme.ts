@@ -24,14 +24,13 @@ export const COLORS = {
   
   // Category badge colors
   categories: {
-    empire: '#ef4444',
-    battle: '#f97316',
-    exploration: '#14b8a6',
-    culture: '#8b5cf6',
-    politics: '#3b82f6',
-    science: '#06b6d4',
-    general: '#64748b',
-  }
+    'Patriarchs': '#f59e0b',       // Amber / Gold
+    'Exodus': '#f97316',           // Desert Orange
+    'David y Solomon': '#8b5cf6',  // Royal Purple
+    'Jesus': '#38bdf8',            // Sky Blue
+    'Apostles': '#10b981',         // Emerald Green
+    'Other': '#64748b',            // Slate Grey
+  } as Record<string, string>,
 };
 
 export const SPACING = {

@@ -13,7 +13,13 @@ import {
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { HistoricalEvent, HistoricalDate, GeometryType, DatePrecision } from '../types/historical';
+import {
+  HistoricalEvent,
+  HistoricalDate,
+  GeometryType,
+  DatePrecision,
+  EventCategory,
+} from '../types/historical';
 import { showAlert } from '../utils/alertUtils';
 import { COLORS, SPACING, RADIUS } from '../styles/theme';
 
@@ -25,30 +31,29 @@ interface EventEditorModalProps {
   // Interactive map drawing triggers
   onStartMapPlacement: (
     type: GeometryType,
-    currentPoints: [number, number][],
-    onPointsConfirmed: (points: [number, number][]) => void
+    existingPoints: [number, number][],
+    onConfirmed: (points: [number, number][]) => void
   ) => void;
 }
 
-const CATEGORIES: HistoricalEvent['category'][] = [
-  'empire',
-  'battle',
-  'exploration',
-  'culture',
-  'politics',
-  'science',
-  'general',
+const CATEGORIES: EventCategory[] = [
+  'Patriarchs',
+  'Exodus',
+  'David y Solomon',
+  'Jesus',
+  'Apostles',
+  'Other',
 ];
 
 const PRESET_COLORS = [
+  '#f59e0b', // Amber / Gold (Patriarchs)
+  '#f97316', // Orange (Exodus)
+  '#8b5cf6', // Royal Purple (David y Solomon)
+  '#38bdf8', // Sky Blue (Jesus)
+  '#10b981', // Emerald (Apostles)
+  '#64748b', // Slate Grey (Other)
   '#ef4444', // Red
-  '#f97316', // Orange
-  '#eab308', // Yellow/Gold
-  '#10b981', // Emerald
   '#06b6d4', // Cyan
-  '#3b82f6', // Blue
-  '#8b5cf6', // Violet
-  '#ec4899', // Pink
 ];
 
 export const EventEditorModal: React.FC<EventEditorModalProps> = ({
@@ -61,7 +66,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
   // Event basics
   const [title, setTitle] = useState('');
   const [notes, setNotes] = useState('');
-  const [category, setCategory] = useState<HistoricalEvent['category']>('general');
+  const [category, setCategory] = useState<EventCategory>('Patriarchs');
   const [color, setColor] = useState(PRESET_COLORS[0]);
 
   // Date type mode
@@ -125,7 +130,11 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
     if (eventToEdit) {
       setTitle(eventToEdit.title);
       setNotes(eventToEdit.notes || '');
-      setCategory(eventToEdit.category);
+      if (eventToEdit.category && CATEGORIES.includes(eventToEdit.category as any)) {
+        setCategory(eventToEdit.category as EventCategory);
+      } else {
+        setCategory('Other');
+      }
       setColor(eventToEdit.color || PRESET_COLORS[0]);
 
       if (eventToEdit.hasNoStartDate) {
@@ -172,7 +181,7 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
       // Reset form for fresh event creation
       setTitle('');
       setNotes('');
-      setCategory('general');
+      setCategory('Patriarchs');
       setColor(PRESET_COLORS[0]);
       setDateMode('single');
       setStartIsBCE(false);
@@ -829,7 +838,7 @@ const styles = StyleSheet.create({
   categoryChipText: {
     color: COLORS.textMuted,
     fontSize: 11,
-    textTransform: 'capitalize',
+    fontWeight: '500',
   },
   categoryChipTextSelected: {
     color: COLORS.text,

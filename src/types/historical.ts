@@ -25,12 +25,20 @@ export interface HistoricalGeometry {
   polygon?: [number, number][];
 }
 
+export type EventCategory =
+  | 'Patriarchs'
+  | 'Exodus'
+  | 'David y Solomon'
+  | 'Jesus'
+  | 'Apostles'
+  | 'Other';
+
 export interface HistoricalEvent {
   id: string;
   title: string;
   notes: string;
   color: string;
-  category: 'empire' | 'battle' | 'exploration' | 'culture' | 'politics' | 'science' | 'general';
+  category: EventCategory;
   
   // Date configuration
   hasNoStartDate?: boolean; // Existed from earliest times / unbounded start
