@@ -26,7 +26,8 @@ export const COLORS = {
   categories: {
     'Patriarchs': '#f59e0b',       // Amber / Gold
     'Exodus': '#f97316',           // Desert Orange
-    'David y Solomon': '#8b5cf6',  // Royal Purple
+    'David/Solomon': '#8b5cf6',    // Royal Purple
+    'David y Solomon': '#8b5cf6',  // Backward compatibility alias
     'Jesus': '#38bdf8',            // Sky Blue
     'Apostles': '#10b981',         // Emerald Green
     'Other': '#64748b',            // Slate Grey

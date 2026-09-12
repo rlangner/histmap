@@ -28,7 +28,7 @@ export interface HistoricalGeometry {
 export type EventCategory =
   | 'Patriarchs'
   | 'Exodus'
-  | 'David y Solomon'
+  | 'David/Solomon'
   | 'Jesus'
   | 'Apostles'
   | 'Other';

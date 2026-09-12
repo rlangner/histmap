@@ -128,7 +128,7 @@ export const INITIAL_HISTORICAL_EVENTS: HistoricalEvent[] = [
     title: 'Roman Empire (Height under Trajan)',
     notes: 'The post-Republican period of ancient Rome. At its height under Trajan in 117 CE, it spanned Western Europe, the Mediterranean, parts of Britain, North Africa, and the Near East with roughly 50 to 70 million inhabitants.',
     color: '#dc2626',
-    category: 'David y Solomon',
+    category: 'David/Solomon',
     startDate: {
       year: -27,
       precision: 'year',

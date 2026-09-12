@@ -39,7 +39,7 @@ interface EventEditorModalProps {
 const CATEGORIES: EventCategory[] = [
   'Patriarchs',
   'Exodus',
-  'David y Solomon',
+  'David/Solomon',
   'Jesus',
   'Apostles',
   'Other',
@@ -48,7 +48,7 @@ const CATEGORIES: EventCategory[] = [
 const PRESET_COLORS = [
   '#f59e0b', // Amber / Gold (Patriarchs)
   '#f97316', // Orange (Exodus)
-  '#8b5cf6', // Royal Purple (David y Solomon)
+  '#8b5cf6', // Royal Purple (David/Solomon)
   '#38bdf8', // Sky Blue (Jesus)
   '#10b981', // Emerald (Apostles)
   '#64748b', // Slate Grey (Other)
@@ -130,10 +130,16 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
     if (eventToEdit) {
       setTitle(eventToEdit.title);
       setNotes(eventToEdit.notes || '');
-      if (eventToEdit.category && CATEGORIES.includes(eventToEdit.category as any)) {
-        setCategory(eventToEdit.category as EventCategory);
+      if (eventToEdit.category) {
+        if (eventToEdit.category === ('David y Solomon' as any)) {
+          setCategory('David/Solomon');
+        } else if (CATEGORIES.includes(eventToEdit.category as any)) {
+          setCategory(eventToEdit.category as EventCategory);
+        } else {
+          setCategory('Other');
+        }
       } else {
-        setCategory('Other');
+        setCategory('Patriarchs');
       }
       setColor(eventToEdit.color || PRESET_COLORS[0]);
 
