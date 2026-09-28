@@ -41,3 +41,7 @@ yarn-error.*
 /android
 
 command.txt
+
+# Python
+__pycache__/
+*.pyc

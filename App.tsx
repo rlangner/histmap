@@ -95,35 +95,98 @@ export default function App() {
     setDetailModalVisible(true);
   };
 
-  // Step Prev Event
+  // Helper to extract the primary chronological decimal year of an event
+  const getEventYear = (e: HistoricalEvent): number => {
+    if (e.startDate) return dateToDecimalYear(e.startDate);
+    if (e.endDate) return dateToDecimalYear(e.endDate);
+    return 0;
+  };
+
+  // Stably sorted events with secondary tie-breakers (title, then id)
+  const sortedEvents = useMemo(() => {
+    return [...events].sort((a, b) => {
+      const yearDiff = getEventYear(a) - getEventYear(b);
+      if (Math.abs(yearDiff) > 0.000001) {
+        return yearDiff;
+      }
+      const titleDiff = a.title.localeCompare(b.title);
+      if (titleDiff !== 0) return titleDiff;
+      return a.id.localeCompare(b.id);
+    });
+  }, [events]);
+
+  // Step Prev Event (chronological backward traversal)
   const handleStepPrev = () => {
-    const sorted = [...events]
-      .filter((e) => e.startDate)
-      .sort((a, b) => dateToDecimalYear(a.startDate!) - dateToDecimalYear(b.startDate!));
+    if (sortedEvents.length === 0) return;
 
-    const prev = [...sorted]
-      .reverse()
-      .find((e) => dateToDecimalYear(e.startDate!) < currentDecimalYear - 0.01);
+    let prevIndex = -1;
 
-    if (prev && prev.startDate) {
-      const yr = dateToDecimalYear(prev.startDate);
+    // If an event is currently selected and the timeline scrubber hasn't drifted far away
+    if (selectedEventId) {
+      const currentIndex = sortedEvents.findIndex((e) => e.id === selectedEventId);
+      if (currentIndex !== -1) {
+        const currentEvent = sortedEvents[currentIndex];
+        const isNearCurrent = Math.abs(getEventYear(currentEvent) - currentDecimalYear) < 1.0;
+        if (isNearCurrent) {
+          // Go to previous event index, wrapping around to the end
+          prevIndex = (currentIndex - 1 + sortedEvents.length) % sortedEvents.length;
+        }
+      }
+    }
+
+    // If no event selected or scrubber moved away, find the last event before currentDecimalYear
+    if (prevIndex === -1) {
+      for (let i = sortedEvents.length - 1; i >= 0; i--) {
+        if (getEventYear(sortedEvents[i]) < currentDecimalYear - 0.0001) {
+          prevIndex = i;
+          break;
+        }
+      }
+      if (prevIndex === -1) {
+        prevIndex = sortedEvents.length - 1;
+      }
+    }
+
+    const prevEvent = sortedEvents[prevIndex];
+    if (prevEvent) {
+      const yr = getEventYear(prevEvent);
       setCurrentDecimalYear(yr);
-      setSelectedEventId(prev.id);
+      setSelectedEventId(prevEvent.id);
     }
   };
 
-  // Step Next Event
+  // Step Next Event (chronological forward traversal)
   const handleStepNext = () => {
-    const sorted = [...events]
-      .filter((e) => e.startDate)
-      .sort((a, b) => dateToDecimalYear(a.startDate!) - dateToDecimalYear(b.startDate!));
+    if (sortedEvents.length === 0) return;
 
-    const next = sorted.find((e) => dateToDecimalYear(e.startDate!) > currentDecimalYear + 0.01);
+    let nextIndex = -1;
 
-    if (next && next.startDate) {
-      const yr = dateToDecimalYear(next.startDate);
+    // If an event is currently selected and the timeline scrubber hasn't drifted far away
+    if (selectedEventId) {
+      const currentIndex = sortedEvents.findIndex((e) => e.id === selectedEventId);
+      if (currentIndex !== -1) {
+        const currentEvent = sortedEvents[currentIndex];
+        const isNearCurrent = Math.abs(getEventYear(currentEvent) - currentDecimalYear) < 1.0;
+        if (isNearCurrent) {
+          // Go to next event index, wrapping around to the beginning
+          nextIndex = (currentIndex + 1) % sortedEvents.length;
+        }
+      }
+    }
+
+    // If no event selected or scrubber moved away, find the first event after currentDecimalYear
+    if (nextIndex === -1) {
+      const foundIndex = sortedEvents.findIndex(
+        (e) => getEventYear(e) > currentDecimalYear + 0.0001
+      );
+      nextIndex = foundIndex !== -1 ? foundIndex : 0;
+    }
+
+    const nextEvent = sortedEvents[nextIndex];
+    if (nextEvent) {
+      const yr = getEventYear(nextEvent);
       setCurrentDecimalYear(yr);
-      setSelectedEventId(next.id);
+      setSelectedEventId(nextEvent.id);
     }
   };
 
@@ -356,6 +419,8 @@ export default function App() {
           onChangeMode={setFilterMode}
           activeCount={activeEvents.length}
           totalCount={events.length}
+          selectedEvent={selectedEvent}
+          onOpenDetail={() => setDetailModalVisible(true)}
         />
 
         {/* Multi-Tier Timeline (Macro, Meso, Micro) */}

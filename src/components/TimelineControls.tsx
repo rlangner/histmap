@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { HistoricalEvent } from '../types/historical';
 import { COLORS, SPACING, RADIUS } from '../styles/theme';
 
 interface TimelineControlsProps {
@@ -15,6 +16,8 @@ interface TimelineControlsProps {
   onChangeMode: (mode: 'active_only' | 'show_all' | 'window') => void;
   activeCount: number;
   totalCount: number;
+  selectedEvent?: HistoricalEvent | null;
+  onOpenDetail?: () => void;
 }
 
 const SPEEDS = [
@@ -38,6 +41,8 @@ export const TimelineControls: React.FC<TimelineControlsProps> = ({
   onChangeMode,
   activeCount,
   totalCount,
+  selectedEvent,
+  onOpenDetail,
 }) => {
   return (
     <View style={styles.container}>
@@ -71,6 +76,55 @@ export const TimelineControls: React.FC<TimelineControlsProps> = ({
         <TouchableOpacity style={styles.iconButton} onPress={onJumpToday} accessibilityLabel="Jump to Today">
           <Ionicons name="today-outline" size={16} color={COLORS.primaryLight} />
         </TouchableOpacity>
+
+        {/* View Selected Event Detail Button */}
+        <TouchableOpacity
+          style={[
+            styles.iconButton,
+            selectedEvent && styles.detailButtonActive,
+            !selectedEvent && styles.iconButtonDisabled,
+          ]}
+          onPress={onOpenDetail}
+          disabled={!selectedEvent || !onOpenDetail}
+          accessibilityLabel={
+            selectedEvent
+              ? `View details for "${selectedEvent.title}"`
+              : 'No event selected'
+          }
+        >
+          <Ionicons
+            name="information-circle"
+            size={18}
+            color={
+              selectedEvent
+                ? selectedEvent.color || COLORS.primaryLight
+                : COLORS.textDim
+            }
+          />
+        </TouchableOpacity>
+
+        {/* Selected Event Title Pill */}
+        {selectedEvent && onOpenDetail && (
+          <TouchableOpacity
+            style={[
+              styles.selectedEventPill,
+              { borderColor: selectedEvent.color || COLORS.borderHighlight },
+            ]}
+            onPress={onOpenDetail}
+            accessibilityLabel={`Open details for "${selectedEvent.title}"`}
+          >
+            <View
+              style={[
+                styles.eventDot,
+                { backgroundColor: selectedEvent.color || COLORS.primary },
+              ]}
+            />
+            <Text style={styles.selectedEventText} numberOfLines={1}>
+              {selectedEvent.title}
+            </Text>
+            <Ionicons name="open-outline" size={12} color={COLORS.textMuted} />
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Speed Selector */}
@@ -239,5 +293,36 @@ const styles = StyleSheet.create({
     color: COLORS.primaryLight,
     fontSize: 10,
     fontWeight: '700',
+  },
+  detailButtonActive: {
+    backgroundColor: 'rgba(56, 189, 248, 0.15)',
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+  },
+  iconButtonDisabled: {
+    opacity: 0.35,
+  },
+  selectedEventPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.surfaceLight,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    maxWidth: 180,
+  },
+  eventDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 3.5,
+  },
+  selectedEventText: {
+    color: COLORS.text,
+    fontSize: 11,
+    fontWeight: '600',
+    flexShrink: 1,
   },
 });
