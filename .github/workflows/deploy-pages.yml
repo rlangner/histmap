@@ -35,8 +35,10 @@ jobs:
       - name: Export Web
         run: npx expo export -p web
 
-      - name: Create .nojekyll
-        run: touch dist/.nojekyll
+      - name: Setup Pages Assets and .nojekyll
+        run: |
+          touch dist/.nojekyll
+          cp histmap.json biblical_events.histmap.json dist/ || true
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
