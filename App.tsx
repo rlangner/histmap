@@ -53,14 +53,88 @@ export default function App() {
     });
   }, []);
 
-  // Compute active events
+  // Helper to extract the primary chronological decimal year of an event
+  const getEventYear = (e: HistoricalEvent): number => {
+    if (e.startDate) return dateToDecimalYear(e.startDate);
+    if (e.endDate) return dateToDecimalYear(e.endDate);
+    return 0;
+  };
+
+  // Stably sorted events with secondary tie-breakers (title, then id)
+  const sortedEvents = useMemo(() => {
+    return [...events].sort((a, b) => {
+      const yearDiff = getEventYear(a) - getEventYear(b);
+      if (Math.abs(yearDiff) > 0.000001) {
+        return yearDiff;
+      }
+      const titleDiff = a.title.localeCompare(b.title);
+      if (titleDiff !== 0) return titleDiff;
+      return a.id.localeCompare(b.id);
+    });
+  }, [events]);
+
+  // Compute active events (strictly single event when in active_only mode)
   const activeEvents = useMemo(() => {
-    return events.filter((e) => isEventActiveAt(e, currentDecimalYear, filterMode, 5));
-  }, [events, currentDecimalYear, filterMode]);
+    if (events.length === 0) return [];
+
+    if (filterMode === 'show_all') {
+      return events;
+    }
+
+    if (filterMode === 'window') {
+      return events.filter((e) => isEventActiveAt(e, currentDecimalYear, 'window', 5));
+    }
+
+    // filterMode === 'active_only': strictly ONE single event
+    // 1. If an event is selected and active or close to current timeline position, isolate strictly that one
+    if (selectedEventId) {
+      const selected = events.find((e) => e.id === selectedEventId);
+      if (selected) {
+        const isNear =
+          Math.abs(getEventYear(selected) - currentDecimalYear) <= 1.0 ||
+          isEventActiveAt(selected, currentDecimalYear, 'active_only');
+        if (isNear) {
+          return [selected];
+        }
+      }
+    }
+
+    // 2. Find any active candidates from sortedEvents at currentDecimalYear
+    const activeCandidates = sortedEvents.filter((e) =>
+      isEventActiveAt(e, currentDecimalYear, 'active_only')
+    );
+
+    if (activeCandidates.length > 0) {
+      // Pick the single closest candidate to currentDecimalYear
+      let best = activeCandidates[0];
+      let bestDiff = Math.abs(getEventYear(best) - currentDecimalYear);
+      for (let i = 1; i < activeCandidates.length; i++) {
+        const diff = Math.abs(getEventYear(activeCandidates[i]) - currentDecimalYear);
+        if (diff < bestDiff) {
+          bestDiff = diff;
+          best = activeCandidates[i];
+        }
+      }
+      return [best];
+    }
+
+    // 3. No candidate active at currentDecimalYear
+    return [];
+  }, [events, sortedEvents, currentDecimalYear, filterMode, selectedEventId]);
 
   const activeEventIds = useMemo(() => {
     return activeEvents.map((e) => e.id);
   }, [activeEvents]);
+
+  // When in active_only mode, keep selectedEventId synchronized with the single active event
+  useEffect(() => {
+    if (filterMode === 'active_only' && activeEvents.length === 1) {
+      const singleEvent = activeEvents[0];
+      if (selectedEventId !== singleEvent.id) {
+        setSelectedEventId(singleEvent.id);
+      }
+    }
+  }, [filterMode, activeEvents, selectedEventId]);
 
   // Selected event object
   const selectedEvent = useMemo(() => {
@@ -92,28 +166,12 @@ export default function App() {
   // Handle Event Selection
   const handleSelectEvent = (eventId: string) => {
     setSelectedEventId(eventId);
+    const ev = events.find((e) => e.id === eventId);
+    if (ev) {
+      setCurrentDecimalYear(getEventYear(ev));
+    }
     setDetailModalVisible(true);
   };
-
-  // Helper to extract the primary chronological decimal year of an event
-  const getEventYear = (e: HistoricalEvent): number => {
-    if (e.startDate) return dateToDecimalYear(e.startDate);
-    if (e.endDate) return dateToDecimalYear(e.endDate);
-    return 0;
-  };
-
-  // Stably sorted events with secondary tie-breakers (title, then id)
-  const sortedEvents = useMemo(() => {
-    return [...events].sort((a, b) => {
-      const yearDiff = getEventYear(a) - getEventYear(b);
-      if (Math.abs(yearDiff) > 0.000001) {
-        return yearDiff;
-      }
-      const titleDiff = a.title.localeCompare(b.title);
-      if (titleDiff !== 0) return titleDiff;
-      return a.id.localeCompare(b.id);
-    });
-  }, [events]);
 
   // Step Prev Event (chronological backward traversal)
   const handleStepPrev = () => {
@@ -193,6 +251,19 @@ export default function App() {
   // Jump to Today
   const handleJumpToday = () => {
     setCurrentDecimalYear(2026.68);
+  };
+
+  // Handle Filter Mode Change
+  const handleChangeFilterMode = (newMode: 'active_only' | 'show_all' | 'window') => {
+    setFilterMode(newMode);
+    if (newMode === 'active_only') {
+      if (selectedEventId) {
+        const selected = events.find((e) => e.id === selectedEventId);
+        if (selected) {
+          setCurrentDecimalYear(getEventYear(selected));
+        }
+      }
+    }
   };
 
   // Open Create Modal
@@ -416,7 +487,7 @@ export default function App() {
           onStepNext={handleStepNext}
           onJumpToday={handleJumpToday}
           mode={filterMode}
-          onChangeMode={setFilterMode}
+          onChangeMode={handleChangeFilterMode}
           activeCount={activeEvents.length}
           totalCount={events.length}
           selectedEvent={selectedEvent}
